@@ -2,7 +2,7 @@
   <div class="vuetify-demo-page">
     <div class="form-container">
       <fom-generator-vue
-        :form-components="FormComponents"
+        :form-components="vuetifyComponents"
         :form-config="formConfig"
         :form-rules="FormRules"
         :submit-handler="submitHandler"
@@ -43,7 +43,7 @@
 
 <script>
 // import { jsToXml } from "json-xml-parse";
-import FormComponents from "@/utils/form-components.js";
+import { vuetifyComponents } from "@/utils/form-components.js";
 import FormRules from "@/utils/form-rules.js";
 export default {
   components: {
@@ -56,10 +56,11 @@ export default {
       formCtx: undefined,
       submitSuccess: false,
       useEmail: false,
+      initial: "",
     };
   },
   computed: {
-    FormComponents: () => FormComponents,
+    vuetifyComponents: () => vuetifyComponents,
     FormRules: () => FormRules,
     isDev: () => process.env.NODE_ENV === "development",
     formConfig() {
