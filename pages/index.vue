@@ -81,11 +81,11 @@ export default {
     elementComponents: () => elementComponents,
     vuetifyComponents: () => vuetifyComponents,
     FormRules: () => FormRules,
-    isDev: () => process.env.NODE_ENV === "development",
+    isDev: () => false,
     formConfig() {
       return {
-        activeValidation: true,
-        logs: true,
+        activeValidation: false,
+        logs: false,
         fields: [
           [
             {
