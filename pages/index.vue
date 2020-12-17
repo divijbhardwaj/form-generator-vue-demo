@@ -2,6 +2,7 @@
   <div class="vuetify-demo-page">
     <div class="form-container">
       <fom-generator-vue
+        v-model="fields"
         :form-components="vuetifyComponents"
         :form-config="formConfig"
         :form-rules="FormRules"
@@ -11,21 +12,35 @@
       >
         <template v-slot:header>
           <div class="header-container">
-            <p>Create your Example Account</p>
+            <h2 class="form-heading">Create your Account</h2>
           </div>
         </template>
         <template v-slot:username_after>
-          <div>
-            <p>You can use letters, numbers & periods</p>
-            <p @click="useEmail = true" text color="blue" small>
+          <div class="username-after-container">
+            <p class="field-desc">You can use letters, numbers & periods</p>
+            <p
+              class="field-change"
+              @click="useEmail = true"
+              text
+              color="blue"
+              small
+            >
               Use my current email address instead
             </p>
           </div>
         </template>
         <template v-slot:email_after>
-          <div>
-            <p>You'll need to confirm that this email belongs to you.s</p>
-            <p @click="useEmail = false" text color="blue" small>
+          <div class="email-after-container">
+            <p class="field-desc">
+              You'll need to confirm that this email belongs to you.s
+            </p>
+            <p
+              class="field-change"
+              @click="useEmail = false"
+              text
+              color="blue"
+              small
+            >
               Create a new email address instead
             </p>
           </div>
@@ -40,10 +55,12 @@
     <submit-success :show="submitSuccess" />
   </div>
 </template>
-
 <script>
 // import { jsToXml } from "json-xml-parse";
-import { vuetifyComponents } from "@/utils/form-components.js";
+import {
+  vuetifyComponents,
+  elementComponents,
+} from "@/utils/form-components.js";
 import FormRules from "@/utils/form-rules.js";
 export default {
   components: {
@@ -57,16 +74,18 @@ export default {
       submitSuccess: false,
       useEmail: false,
       initial: "",
+      fields: {},
     };
   },
   computed: {
+    elementComponents: () => elementComponents,
     vuetifyComponents: () => vuetifyComponents,
     FormRules: () => FormRules,
     isDev: () => process.env.NODE_ENV === "development",
     formConfig() {
       return {
         activeValidation: true,
-        logs: this.isDev,
+        logs: true,
         fields: [
           [
             {
@@ -152,10 +171,9 @@ export default {
 };
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
 .vuetify-demo-page {
-  padding: 12px 12px 24px;
-
+  padding: 90px 12px 24px !important;
   @media only screen and(min-width: 450px) {
     padding: 36px 28px 24px;
   }
@@ -169,10 +187,47 @@ export default {
 
       @media only screen and(min-width: 600px) {
         max-width: 448px;
+
+        .generated-form__body__row {
+          display: flex;
+
+          &__col {
+            flex: 1;
+
+            &:nth-child(even) {
+              margin-left: 16px;
+            }
+          }
+        }
       }
 
       @media only screen and(min-width: 900px) {
         max-width: 748px;
+      }
+
+      .header-container {
+        .form-heading {
+          margin-bottom: 20px;
+        }
+      }
+
+      .username-after-container,
+      .email-after-container {
+        .field-desc {
+          font-size: 12px;
+          margin: -15px 10px 30px !important;
+        }
+        .field-change {
+          margin: -20px 0px 40px !important;
+          color: #1a73e8;
+          font-weight: 600;
+          cursor: pointer;
+        }
+      }
+
+      .action-container {
+        display: flex;
+        justify-content: flex-end;
       }
     }
   }

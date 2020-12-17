@@ -10,7 +10,8 @@
   },
   "dependencies": {
     "core-js": "^3.6.5",
-    "form-generator-vue": "file:../../form-generator-vue",
+    "element-ui": "^2.14.1",
+    "form-generator-vue": "^1.1.7",
     "nuxt": "^2.14.6",
     "vue-material": "^1.0.0-beta-15"
   },
