@@ -1,12 +1,13 @@
 <template>
   <div class="vuetify-demo-page">
+    {{fields}}
     <div class="form-container">
       <fom-generator-vue
         v-model="fields"
         :form-components="vuetifyComponents"
-        :form-config="formConfig"
-        :form-rules="FormRules"
-        :submit-handler="submitHandler"
+        :schema="formConfig"
+        :validation-rules="FormRules"
+        :onSubmit="submitHandler"
         @setFormContext="(ctx) => (formCtx = ctx)"
         class="form"
       >
@@ -45,7 +46,7 @@
             </p>
           </div>
         </template>
-        <template v-slot:actions>
+        <template v-slot:footer>
           <div class="action-container">
             <v-btn small dark color="blue" type="submit">Next</v-btn>
           </div>
@@ -53,6 +54,7 @@
       </fom-generator-vue>
     </div>
     <submit-success :show="submitSuccess" />
+    <button @click="test">dsf</button>
   </div>
 </template>
 <script>
@@ -74,18 +76,37 @@ export default {
       submitSuccess: false,
       useEmail: false,
       initial: "",
-      fields: {},
+      fields: {
+        values: {
+          firstName: 'divij',
+          asdasdasd:'asdasda'
+        },
+        errors: {
+          firstName: 'asdasd'
+        }
+      }
     };
   },
+  watch:{
+    'fields.values.firstName': {
+      handler: function() {
+      //  this.de();
+      }
+    }
+  },
   computed: {
+    // de() {
+    //   return this.debounce(()=> { this.fields.values.lastName = this.fields.values.lastName + '+'}, 1000);
+    // },
     elementComponents: () => elementComponents,
     vuetifyComponents: () => vuetifyComponents,
     FormRules: () => FormRules,
     isDev: () => false,
     formConfig() {
       return {
-        activeValidation: false,
-        logs: false,
+        activeValidation: true,
+        activeValidationDelay: 0,
+        logs: true,
         fields: [
           [
             {
@@ -164,10 +185,26 @@ export default {
     },
   },
   methods: {
+    debounce: (func, wait)=> {
+      let timeOut;
+      return function executedFunction() {
+        clearTimeout(timeOut);
+        timeOut=setTimeout(function(){
+          clearTimeout(timeOut);
+          func();
+        },wait);
+      }
+    },
+    test() {
+      this.fields.values.firstName='dsfdsfsdsdf';
+    },
     submitHandler() {
       this.submitSuccess = !this.submitSuccess;
     },
   },
+  mounted() {
+    // setTimeout(()=>{this.fields.values && (this.fields.values.first = 'gg')}, 2000)
+  }
 };
 </script>
 

@@ -5,8 +5,7 @@ const MASTER_RULES = {
 }
 export default {
   // will be applied to all fields ------------
-  COMMON_VALIDATORS: {
-    number: value => {
+  FILTER:  value => {
       if (typeof value === 'number') {
         if (value < 0) {
           return 'Cannot be negative';
@@ -14,7 +13,7 @@ export default {
       }
       return '';
     },
-  },
+
 
   // VALIDATION TYPES (common logic for multiple regex type validations)---------
   regex: function (value, rules = {}, fields) {
