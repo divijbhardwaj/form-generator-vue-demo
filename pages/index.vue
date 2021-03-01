@@ -1,16 +1,14 @@
 <template>
   <div class="vuetify-demo-page">
-    {{fields}}
     <div class="form-container">
       <fom-generator-vue
         v-model="fields"
-        :form-components="vuetifyComponents"
+        :components="vuetifyComponents"
         :schema="formConfig"
-        :validation-rules="FormRules"
         :onSubmit="submitHandler"
-        @setFormContext="(ctx) => (formCtx = ctx)"
+        :disabled="false"
         class="form"
-      >
+      >    
         <template v-slot:header>
           <div class="header-container">
             <h2 class="form-heading">Create your Account</h2>
@@ -54,16 +52,13 @@
       </fom-generator-vue>
     </div>
     <submit-success :show="submitSuccess" />
-    <button @click="test">dsf</button>
   </div>
 </template>
 <script>
-// import { jsToXml } from "json-xml-parse";
 import {
   vuetifyComponents,
   elementComponents,
 } from "@/utils/form-components.js";
-import FormRules from "@/utils/form-rules.js";
 export default {
   components: {
     FomGeneratorVue: () => import("form-generator-vue"),
@@ -74,7 +69,7 @@ export default {
       showPassword: false,
       formCtx: undefined,
       submitSuccess: false,
-      useEmail: false,
+      useEmail: false, 
       initial: "",
       fields: {
         values: {
@@ -87,25 +82,15 @@ export default {
       }
     };
   },
-  watch:{
-    'fields.values.firstName': {
-      handler: function() {
-      //  this.de();
-      }
-    }
-  },
   computed: {
-    // de() {
-    //   return this.debounce(()=> { this.fields.values.lastName = this.fields.values.lastName + '+'}, 1000);
-    // },
     elementComponents: () => elementComponents,
     vuetifyComponents: () => vuetifyComponents,
     FormRules: () => FormRules,
     isDev: () => false,
     formConfig() {
       return {
-        activeValidation: true,
-        activeValidationDelay: 0,
+        av: true,
+        // avDelay: 4000,
         logs: true,
         fields: [
           [
@@ -128,7 +113,7 @@ export default {
           ],
           {
             model: "username",
-            show: !this.useEmail,
+            hide: this.useEmail,
             props: {
               label: "Username",
               outlined: true,
@@ -138,46 +123,41 @@ export default {
           },
           {
             model: "email",
-            show: this.useEmail,
+            hide: !this.useEmail,
             props: {
               label: "Your email address",
               outlined: true,
               dense: true,
             },
-            rules: {
-              type: "regex",
-              ruleName: "email",
-              errorMsg: "Invalid email",
-            },
+            validator: ()=> !/^(([^<>()\[\]\.,;:\s@\"]+(\.[^<>()\[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i.test(this.fields.values.email) && 'Invalid email'
           },
           [
             {
               model: "password",
+              hide: false,
               type: this.showPassword ? "text" : "password",
               props: {
                 label: "Password",
                 outlined: true,
                 dense: true,
               },
-              rules: {
-                type: "regex",
-                ruleName: "password",
-                errorMsg: `Password must be a combination of at least 6 alphanumeric 
+              validator: () => !/^(?=.*[0-9])(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]{6,16}$/.test(this.fields.values.password) && `Password must be a combination of at least 6 alphanumeric 
                 and special character(s) (e.g. '~','!','@','#','$','%', etc.)`,
-              },
+              errorProp: 'errorMessages'
             },
             {
               model: "confirmPassword",
               type: this.showPassword ? "text" : "password",
               props: {
-                // "append-icon": this.showPassword ? "mdi-eye" : "mdi-eye-off",
+                "append-icon": this.showPassword ? "mdi-eye" : "mdi-eye-off",
                 label: "Confirm",
                 outlined: true,
                 dense: true,
               },
-              // triggers: (ctx) => ({
-              //   "click:append": () => (this.showPassword = !this.showPassword),
-              // }),
+              validator: () => this.fields.values.confirmPassword !== this.fields.values.password && 'Confirm Password',
+              events: () => ({
+                "click:append": () => (this.showPassword = !this.showPassword),
+              }),
             },
           ],
         ],
@@ -195,16 +175,10 @@ export default {
         },wait);
       }
     },
-    test() {
-      this.fields.values.firstName='dsfdsfsdsdf';
-    },
     submitHandler() {
       this.submitSuccess = !this.submitSuccess;
     },
   },
-  mounted() {
-    // setTimeout(()=>{this.fields.values && (this.fields.values.first = 'gg')}, 2000)
-  }
 };
 </script>
 
