@@ -3,19 +3,19 @@
     <div class="form-container">
       <fom-generator-vue
         v-model="fields"
-        :form-components="vuetifyComponents"
-        :form-config="formConfig"
-        :form-rules="FormRules"
-        :submit-handler="submitHandler"
-        @setFormContext="(ctx) => (formCtx = ctx)"
+        :components="vuetifyComponents"
+        :schema="formConfig"
+        :onSubmit="submitHandler"
+        :disabled="false"
         class="form"
-      >
+        activeValidation
+      >    
         <template v-slot:header>
           <div class="header-container">
             <h2 class="form-heading">Create your Account</h2>
           </div>
         </template>
-        <template v-slot:username_after>
+        <template v-slot:after-username>
           <div class="username-after-container">
             <p class="field-desc">You can use letters, numbers & periods</p>
             <p
@@ -29,7 +29,7 @@
             </p>
           </div>
         </template>
-        <template v-slot:email_after>
+        <template v-slot:after-email>
           <div class="email-after-container">
             <p class="field-desc">
               You'll need to confirm that this email belongs to you.s
@@ -45,7 +45,7 @@
             </p>
           </div>
         </template>
-        <template v-slot:actions>
+        <template v-slot:footer>
           <div class="action-container">
             <v-btn small dark color="blue" type="submit">Next</v-btn>
           </div>
@@ -56,12 +56,10 @@
   </div>
 </template>
 <script>
-// import { jsToXml } from "json-xml-parse";
 import {
   vuetifyComponents,
   elementComponents,
 } from "@/utils/form-components.js";
-import FormRules from "@/utils/form-rules.js";
 export default {
   components: {
     FomGeneratorVue: () => import("form-generator-vue"),
@@ -72,9 +70,13 @@ export default {
       showPassword: false,
       formCtx: undefined,
       submitSuccess: false,
-      useEmail: false,
+      useEmail: false, 
       initial: "",
-      fields: {},
+      fields: {
+        values: {
+          firstName: 'Pewdiepie',
+        }
+      }
     };
   },
   computed: {
@@ -84,8 +86,6 @@ export default {
     isDev: () => false,
     formConfig() {
       return {
-        activeValidation: false,
-        logs: false,
         fields: [
           [
             {
@@ -94,6 +94,7 @@ export default {
                 label: "First name",
                 outlined: true,
                 dense: true,
+                required: true
               },
             },
             {
@@ -102,61 +103,61 @@ export default {
                 label: "Last name",
                 outlined: true,
                 dense: true,
+                required: true
               },
             },
           ],
           {
             model: "username",
-            show: !this.useEmail,
+            hide: this.useEmail,
             props: {
               label: "Username",
               outlined: true,
               suffix: "@example.com",
               dense: true,
+              required: true
             },
           },
           {
             model: "email",
-            show: this.useEmail,
+            hide: !this.useEmail,
             props: {
               label: "Your email address",
               outlined: true,
               dense: true,
+              required: true
             },
-            rules: {
-              type: "regex",
-              ruleName: "email",
-              errorMsg: "Invalid email",
-            },
+            validator: ()=> !/^(([^<>()\[\]\.,;:\s@\"]+(\.[^<>()\[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i.test(this.fields.values.email) && 'Invalid email'
           },
           [
             {
               model: "password",
+              hide: false,
               type: this.showPassword ? "text" : "password",
               props: {
                 label: "Password",
                 outlined: true,
                 dense: true,
+                required: true
               },
-              rules: {
-                type: "regex",
-                ruleName: "password",
-                errorMsg: `Password must be a combination of at least 6 alphanumeric 
+              validator: () => !/^(?=.*[0-9])(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]{6,16}$/.test(this.fields.values.password) && `Password must be a combination of at least 6 alphanumeric 
                 and special character(s) (e.g. '~','!','@','#','$','%', etc.)`,
-              },
+              errorProp: 'errorMessages'
             },
             {
               model: "confirmPassword",
               type: this.showPassword ? "text" : "password",
               props: {
-                // "append-icon": this.showPassword ? "mdi-eye" : "mdi-eye-off",
+                "append-icon": this.showPassword ? "mdi-eye" : "mdi-eye-off",
                 label: "Confirm",
                 outlined: true,
                 dense: true,
+                required: true
               },
-              // triggers: (ctx) => ({
-              //   "click:append": () => (this.showPassword = !this.showPassword),
-              // }),
+              validator: () => this.fields.values.confirmPassword !== this.fields.values.password && 'Confirm Password',
+              'v-on': {
+                "click:append": () => (this.showPassword = !this.showPassword),
+              },
             },
           ],
         ],
