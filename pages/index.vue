@@ -8,13 +8,14 @@
         :onSubmit="submitHandler"
         :disabled="false"
         class="form"
+        activeValidation
       >    
         <template v-slot:header>
           <div class="header-container">
             <h2 class="form-heading">Create your Account</h2>
           </div>
         </template>
-        <template v-slot:username_after>
+        <template v-slot:after-username>
           <div class="username-after-container">
             <p class="field-desc">You can use letters, numbers & periods</p>
             <p
@@ -28,7 +29,7 @@
             </p>
           </div>
         </template>
-        <template v-slot:email_after>
+        <template v-slot:after-email>
           <div class="email-after-container">
             <p class="field-desc">
               You'll need to confirm that this email belongs to you.s
@@ -73,11 +74,7 @@ export default {
       initial: "",
       fields: {
         values: {
-          firstName: 'divij',
-          asdasdasd:'asdasda'
-        },
-        errors: {
-          firstName: 'asdasd'
+          firstName: 'Pewdiepie',
         }
       }
     };
@@ -89,9 +86,6 @@ export default {
     isDev: () => false,
     formConfig() {
       return {
-        av: true,
-        // avDelay: 4000,
-        logs: true,
         fields: [
           [
             {
@@ -100,6 +94,7 @@ export default {
                 label: "First name",
                 outlined: true,
                 dense: true,
+                required: true
               },
             },
             {
@@ -108,6 +103,7 @@ export default {
                 label: "Last name",
                 outlined: true,
                 dense: true,
+                required: true
               },
             },
           ],
@@ -119,6 +115,7 @@ export default {
               outlined: true,
               suffix: "@example.com",
               dense: true,
+              required: true
             },
           },
           {
@@ -128,6 +125,7 @@ export default {
               label: "Your email address",
               outlined: true,
               dense: true,
+              required: true
             },
             validator: ()=> !/^(([^<>()\[\]\.,;:\s@\"]+(\.[^<>()\[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i.test(this.fields.values.email) && 'Invalid email'
           },
@@ -140,6 +138,7 @@ export default {
                 label: "Password",
                 outlined: true,
                 dense: true,
+                required: true
               },
               validator: () => !/^(?=.*[0-9])(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]{6,16}$/.test(this.fields.values.password) && `Password must be a combination of at least 6 alphanumeric 
                 and special character(s) (e.g. '~','!','@','#','$','%', etc.)`,
@@ -153,11 +152,12 @@ export default {
                 label: "Confirm",
                 outlined: true,
                 dense: true,
+                required: true
               },
               validator: () => this.fields.values.confirmPassword !== this.fields.values.password && 'Confirm Password',
-              events: () => ({
+              'v-on': {
                 "click:append": () => (this.showPassword = !this.showPassword),
-              }),
+              },
             },
           ],
         ],
@@ -165,16 +165,6 @@ export default {
     },
   },
   methods: {
-    debounce: (func, wait)=> {
-      let timeOut;
-      return function executedFunction() {
-        clearTimeout(timeOut);
-        timeOut=setTimeout(function(){
-          clearTimeout(timeOut);
-          func();
-        },wait);
-      }
-    },
     submitHandler() {
       this.submitSuccess = !this.submitSuccess;
     },
