@@ -1,19 +1,25 @@
 export const vuetifyComponents = [
   {
-    type: ['text', 'password', 'email', 'number'],
     name: 'v-text-field',
+    types: ['text', 'password', 'email', 'number'],
     errorProp: 'errorMessages'
   },
   {
-    type: ['radio'],
-    name: 'v-radio-group'
+    name: 'v-select',
+    types: ['select'],
+    errorProp: 'errorMessages'
+  },
+  {
+    name: 'v-radio-group',
+    types: ['radio'],
+    errorProp: 'errorMessages'
   }
 ]
 
 export const elementComponents = [
   {
-    type: ['text', 'password', 'email', 'number'],
     name: 'el-input',
+    types: ['text', 'password', 'email', 'number'],
     errorProp: 'errorMessages'
   }
 ]
